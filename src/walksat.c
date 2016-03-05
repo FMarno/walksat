@@ -1,9 +1,4 @@
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#define BUFFER_SIZE 20
-#define THRESHOLD 1000000
-#define P 0.3
+#include "walksat.h"
 
 void nextToken(char buffer[BUFFER_SIZE]){
   int c = getchar();
@@ -20,7 +15,7 @@ void clearBuffer(char buffer[BUFFER_SIZE]){
 
 void fillVariables(int* variables, int vars){
 	for (int i = 0; i<vars; i++){
-		variables[i] = 0;//rand()% 2;
+		variables[i] = rand()% 2;
 	}
 }
 
