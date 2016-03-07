@@ -25,6 +25,7 @@ int getRandomUnsatisfiedClauseIndex(int* unsatisfiedClauses, int num){
 
 }
 
+//TODO fucked
 int made(int variableIndex,int clauses, int** clausesContainingLiteral,int satisfiedLiterals[clauses]){
   int made = 0;
   for (int i = 0; i< clauses; i++){
@@ -35,6 +36,7 @@ int made(int variableIndex,int clauses, int** clausesContainingLiteral,int satis
   return made;
 }
 
+//TODO fucked
 int broken(int variableIndex, int clauses, int** clausesContainingLiteral, int satisfiedLiterals[clauses]){
   int broken = 0;
   for (int i = 0; i< clauses; i++){
@@ -87,7 +89,7 @@ int main(){
   int vars; int clauses; FILE* fp;
   fp = fopen("cnffiles/uf20-01.cnf", "r");
   if (fp == NULL){
-    printf("fucked it\n");
+    printf("file not found\n");
     exit(1);
   }
 
