@@ -1,4 +1,4 @@
-COMMAND = clang -Wall -Wextra -g
+COMMAND = clang-3.5 -Wall -Wextra -g
 all: WalkSAT
 
 clean:

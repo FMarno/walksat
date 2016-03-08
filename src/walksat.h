@@ -8,5 +8,6 @@
 #define THRESHOLD 1000000
 #define P 0.5
 
-int** parseData(FILE* fp, int* vars, int* clauses);
+void parseHeader(FILE* fp, int* vars, int* clauses);
+void parseData(FILE* fp, int vars, int clauses, int clausesContainingLiteral[vars*2][clauses]);
 #endif

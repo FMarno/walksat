@@ -26,10 +26,10 @@ int getRandomUnsatisfiedClauseIndex(int* unsatisfiedClauses, int num){
 }
 
 //TODO fucked
-int made(int variableIndex,int clauses, int** clausesContainingLiteral,int satisfiedLiterals[clauses]){
+int made(int variableIndex,int clauses,int vars, int clausesContainingLiteral[vars*2][clauses],int satisfiedLiterals[clauses]){
   int made = 0;
   for (int i = 0; i< clauses; i++){
-    if (clausesContainingLiteral[variableIndex+1][i] && satisfiedLiterals[i] == 0){
+    if (clausesContainingLiteral[(variableIndex)+1][i] && satisfiedLiterals[i] == 0){
       made++;
     }
   }
@@ -37,7 +37,7 @@ int made(int variableIndex,int clauses, int** clausesContainingLiteral,int satis
 }
 
 //TODO fucked
-int broken(int variableIndex, int clauses, int** clausesContainingLiteral, int satisfiedLiterals[clauses]){
+int broken(int variableIndex, int clauses, int vars, int clausesContainingLiteral[vars*2][clauses], int satisfiedLiterals[clauses]){
   int broken = 0;
   for (int i = 0; i< clauses; i++){
     if (clausesContainingLiteral[variableIndex][i] && satisfiedLiterals[i] == 1){
@@ -48,17 +48,24 @@ int broken(int variableIndex, int clauses, int** clausesContainingLiteral, int s
 }
 
 
-int pickVar(int clause, int vars, int clauses, int** clausesContainingLiteral, int satisfiedLiterals[clauses]){
+int pickVar(int clause, int vars, int clauses, int clausesContainingLiteral[vars*2][clauses], int satisfiedLiterals[clauses]){
   int best = -1;
   for (int i = 0; i<vars*2; i+=2){
     if (clausesContainingLiteral[i][clause]){
         best = i;
+        break;
+    } else if (clausesContainingLiteral[i+1][clause]){
+    	best = i+1;
+    	break;
     }
   }
-  int bestProfit = made(best, clauses, clausesContainingLiteral, satisfiedLiterals) - broken(best, clauses, clausesContainingLiteral, satisfiedLiterals);
+  int bestProfit = made(best, clauses, vars, clausesContainingLiteral, satisfiedLiterals) - broken(best, clauses, vars, clausesContainingLiteral, satisfiedLiterals);
   for (int i = best+1; i<vars*2; i+=2){
     if (clausesContainingLiteral[i][clause]){
-      int profit = made(i, clauses, clausesContainingLiteral, satisfiedLiterals) - broken(i, clauses, clausesContainingLiteral, satisfiedLiterals);
+    	int m =  made(i, clauses, vars, clausesContainingLiteral, satisfiedLiterals);
+    	int b = broken(i, clauses, vars, clausesContainingLiteral, satisfiedLiterals);
+    	//printf("%d\tm: %d\tb: %d\n",i,m,b );
+      int profit = m-b; 
       if (profit > bestProfit){
         bestProfit = profit;
         best = i;
@@ -66,10 +73,11 @@ int pickVar(int clause, int vars, int clauses, int** clausesContainingLiteral, i
     }
 
   }
+  //printf("%d\n",best/2);
   return best/2;
 }
 
-int pickRandomVar(int clause, int vars, int clauses, int** clausesContainingLiteral){
+int pickRandomVar(int clause, int vars, int clauses, int clausesContainingLiteral[vars*2][clauses]){
   int choices[clauses];
   int num_of_choices = 0; 
   for (int i = 0; i<vars*2; i+=2){
@@ -93,10 +101,18 @@ int main(){
     exit(1);
   }
 
-      printf("parsing data\n");
 
-  int ** clausesContainingLiteral = parseData(fp, &vars, &clauses);
-  printf("data parsed\n");
+  parseHeader(fp, &vars, &clauses);
+
+  int clausesContainingLiteral[vars*2][clauses];
+  for (int i = 0; i < vars*2; ++i)
+  {
+  	for (int  a = 0; a < clauses; ++a)
+  	{
+  		clausesContainingLiteral[i][a] = 0;
+  	}
+  }
+  parseData(fp, vars, clauses, clausesContainingLiteral);
   int* satisfiedLiterals = (int*)calloc(clauses, sizeof(int));
 //define initial variable values
   int variables[vars];
@@ -135,8 +151,7 @@ int main(){
   	}
   }
 
-  printf("\033c");
-
+   printf("\033c");
    for ( int i = 0; i < vars; ++i)
   {
     printf("%d", variables[i]);
@@ -154,7 +169,6 @@ int main(){
   while(num_unsatisfiedClauses && timeout < THRESHOLD){
     //chose random unsatisfied clause
     int randomClause = getRandomUnsatisfiedClauseIndex(unsatisfiedClauses, num_unsatisfiedClauses);
-    //printf("%d\n", randomclause);
 
     r = drand48();
 
@@ -164,7 +178,6 @@ int main(){
     } else {
       varIndex = pickRandomVar(randomClause , vars, clauses, clausesContainingLiteral);
     }
-
     //flip
     variables[varIndex] = !variables[varIndex];
     if (variables[varIndex]){
@@ -203,9 +216,9 @@ int main(){
       }
     }
 
-   printf("\r");
+   //printf("\r");
     for (int i = 0; i < vars; ++i) {
-    printf("%d", variables[i]);
+    //printf("%d", variables[i]);
    }
    timeout++;
   }
@@ -217,10 +230,6 @@ int main(){
   }
   printf("\n%d\n", timeout);
 
-  for (int i =0; i< (vars)*2; i++){
-    free(clausesContainingLiteral[i]);
-  }
-    free(clausesContainingLiteral);
     free(satisfiedLiterals);
 
 
