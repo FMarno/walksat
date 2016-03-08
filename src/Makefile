@@ -12,3 +12,6 @@ parser.o:	parser.c walksat.h
 
 walksat.o:	walksat.c walksat.h
 	$(COMMAND) walksat.c -c -o walksat.o
+
+list.o: list.c list.h
+	$(COMMAND) list.c -c -o list.h
