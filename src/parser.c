@@ -1,4 +1,7 @@
-#include "walksat.h"
+#include "parser.h"
+#include "list.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void nextToken(char buffer[BUFFER_SIZE], FILE* fp){
   int c = fgetc(fp);
@@ -25,10 +28,10 @@ void parseHeader(FILE* fp, int* vars, int* clauses){
   free(line);
 }
 
-void parseData(FILE* fp, int vars, int clauses, int clausesContainingLiteral[vars*2][clauses]){
+void parseData(FILE* fp, int vars, int clauses, List* clausesContainingLiteral[vars*2], List* litsInClause[clauses]){
 	char* line = (char*)malloc(sizeof(char)*BUFFER_SIZE);
 	int i = 0;
-    int token = 0;
+  int token = 0;
 	while (i < clauses){
 	  clearBuffer(line);
 	  nextToken(line, fp);
@@ -43,13 +46,15 @@ void parseData(FILE* fp, int vars, int clauses, int clausesContainingLiteral[var
 	    line--;
 	    token--;
 	    token = token*2 + 1;
-	    clausesContainingLiteral[token][i] = 1;
+	    add(clausesContainingLiteral[token],i);
+      add(litsInClause[i], token);
 	  } else {
 	  	//positive atoms
 	    sscanf(line, "%d", &token);
 	    token--;
 	    token *= 2;
-	    clausesContainingLiteral[token][i] = 1;
+	    add(clausesContainingLiteral[token],i);
+      add(litsInClause[i], token);
 	  }
 	}
     free(line);

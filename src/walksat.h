@@ -1,13 +1,20 @@
 #ifndef HEADER
 #define HEADER
-
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define BUFFER_SIZE 20
-#define THRESHOLD 1000000
-#define P 0.5
+#include <time.h>
+#include "list.h"
 
-void parseHeader(FILE* fp, int* vars, int* clauses);
-void parseData(FILE* fp, int vars, int clauses, int clausesContainingLiteral[vars*2][clauses]);
+
+#define BUFFER_SIZE 20
+
+void flip(int varIndex, int vars, int clauses, int* variables,List* clausesContainingLiteral[vars*2],int satisfiedLiterals[clauses],List* unsatisfiedClauses);
+void fillVariables(int* variables, int vars);
+int getRandomUnsatisfiedClauseIndex(List* unsatisfiedClauses);
+int walksat(FILE* , int THRESHOLD, float P);
+int pickVar(List* lits, int vars, List* clausesContainingLiteral[vars*2], int* satisfiedLiterals);
+int pickRandomVar(List* lits);
+int made(List* clausesContainingLiteral,int* satisfiedLiterals);
+int broken(List* clausesContainingLiteral, int* satisfiedLiterals);
+
 #endif

@@ -13,14 +13,15 @@ typedef struct {
 
 List* createList();
 
+int get(List* l, int index);
+
 void add(List* l, int value);
-void addNode(ListNode* node, int value);
 
 void removeValue(List* l, int value);
-int removeNode(ListNode* node, int value);
+
 
 int contains(List* l, int value);
-int nodeContains(ListNode* node, int value);
+
 
 int lengthOfList(List* l);
 

@@ -9,76 +9,77 @@ List* createList(){
 	return base;
 }
 
+int get(List* l, int index){
+	ListNode* node = l->root;
+	for(int i = 0; i<index; i++){
+		if (node->next != NULL){
+			node = node->next;
+		} else {
+			printf("There aren't that many nodes in the list\n");
+			exit(1);
+		}
+	}
+	return node->value;
+
+}
+
 void add(List* l, int value){
-	if (l->root == NULL){
+	ListNode* node = l-> root;
+
+	if (node == NULL){
 		l->root = malloc(sizeof(ListNode));
 		l->root->value = value;
 		l->root->next = NULL;
 	} else {
-		addNode(l->root, value);
+		while (node->next != NULL){
+			node = node->next;
+		}
+		node->next = malloc(sizeof(ListNode));
+		node->next->value = value;
+		node->next->next = NULL;
 	}
 	l->length++;
 }
 
-void addNode(ListNode* node, int value){
-	if (node->next == NULL){
-		node->next = malloc(sizeof(ListNode));
-		node->next->value = value;
-		node->next->next = NULL;
-	} else {
-		addNode(node->next, value);
-	}
-}
 
 void removeValue(List* l, int value){
-	if (l->root == NULL){
+	ListNode* node = l->root;
+	if (node == NULL){
 		printf("List empty.\n");
 	} else {
-		if (l->root->value == value){
-			ListNode* pt = l->root;
-			l->root = l->root->next;
+		if (node->value == value){
+			ListNode* pt = node;
+			l->root = node->next;
 			free(pt);
 			l->length--;
 		} else {
-			if (removeNode(l->root, value)){
-				l->length--;
+			while(node->next != NULL){
+				if (node->next->value == value){
+					ListNode* pt = node->next;
+					node->next = node->next->next;
+					free(pt);	
+					l->length--;
+					break;
+				}
+				node = node->next;
 			}
 		}
 		
 	}
 }
 
-int removeNode(ListNode* node, int value){
-	if (node->next->next == NULL && node->next->value != value){
-		return 0;
-	}
-	if (node->next->value == value){
-		//remove the next node
-		ListNode* pt = node->next;
-		node->next = node->next->next;
-		free(pt);		
-	} else {
-		//keep recursing
-		removeNode(node->next, value);
-	}
-	return 1;
-}
-
 int contains(List* l, int value){
-	if (l->root != NULL){
-		return nodeContains(l->root, value);
-	}
-	return 0;
-}
-
-int nodeContains(ListNode* node, int value){
+	ListNode* node = l->root;
 	if (node->value == value){
 		return 1;
 	}
-	if (node->next == NULL){
-		return 0;
+	while (node->next != NULL){
+		node = node->next;
+		if (node->value == value){
+			return 1;
+		}
 	}
-	return nodeContains(node->next, value);
+	return 0;
 }
 
 int lengthOfList(List* l){
